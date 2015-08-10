@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block contenido %}
+    <div class="posts">
+        <h1 class="header center orange-text">{{post.titulo_txt}}</h1>
+      <div class="row center">
+        <h5 class="header col s12 light">{{post.txt_cont}}</h5>
+      </div>
+
+    </div>
+    <div class="posts">
+     <div class="divider"></div>
+        <h4>Comentarios</h4>
+        {% csrf_token %} 
+        <div id="mensajes">
+            {% include "mensajes.html" %}
+        </div>
+ <div class="divider"></div>
+        <h5>Deja un comentario:</h5>
+          <div class="row">
+            <div class="input-field col s6">
+              <input value="" id="name" type="text" name="nombre" class="validate">
+              <label class="active" for="first_name2">Nombre</label>
+            </div>
+          </div>
+        <div class="row">
+            <div class="input-field col s6">
+              <input value="" name="mensaje" id="message" id="name" type="text" name="nombre" class="validate">
+              <label class="active" for="first_name2">Comentario</label>
+            </div>
+          </div>
+        </div>
+    
+{% endblock %}
+{% block scripts %}
+
+<script>
+
+    $("#btn_enviar").click(function(){        
+        console.log("VAMO");
+        var data={
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            id:'{{post.id}}',
+            titulo_txt:$('#name').val(),
+            coment_txt:$('#message').val(),
+        }
+        $.ajax({
+            type: "POST",
+            url: "{% url 'mclovin:save_message' %}",
+            data: data,
+            success: function(result){
+                $("#mensajes").html(result);
+                $("#name").val("");
+                $("#message").val("");
+            },
+            error: function(err){
+                console.log("ERRRORRRR");
+                console.log(err.responseText);
+            },
+        });
+    });
+</script>
+
+
+{% endblock %}
